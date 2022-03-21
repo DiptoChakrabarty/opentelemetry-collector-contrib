@@ -19,7 +19,7 @@ import (
 	"time"
 
 	"go.opentelemetry.io/collector/model/pdata"
-	conventions "go.opentelemetry.io/collector/model/semconv/v1.5.0"
+	conventions "go.opentelemetry.io/collector/model/semconv/v1.6.1"
 	common "skywalking.apache.org/repo/goapi/collect/common/v3"
 	logpb "skywalking.apache.org/repo/goapi/collect/logging/v3"
 )
@@ -70,7 +70,7 @@ func resourceToLogData(resource pdata.Resource, logData *logpb.LogData) {
 		logData.ServiceInstance = serviceInstanceID.AsString()
 	}
 
-	attrs.Range(func(k string, v pdata.AttributeValue) bool {
+	attrs.Range(func(k string, v pdata.Value) bool {
 		logData.Tags.Data = append(logData.Tags.Data, &common.KeyStringValuePair{
 			Key:   k,
 			Value: v.AsString(),
@@ -95,7 +95,7 @@ func instrumentationLibraryToLogData(instrumentationLibrary pdata.Instrumentatio
 }
 
 func mapLogRecordToLogData(lr pdata.LogRecord, logData *logpb.LogData) {
-	if lr.Body().Type() == pdata.AttributeValueTypeEmpty {
+	if lr.Body().Type() == pdata.ValueTypeEmpty {
 		return
 	}
 
@@ -117,7 +117,7 @@ func mapLogRecordToLogData(lr pdata.LogRecord, logData *logpb.LogData) {
 		})
 	}
 
-	lr.Attributes().Range(func(k string, v pdata.AttributeValue) bool {
+	lr.Attributes().Range(func(k string, v pdata.Value) bool {
 		logData.Tags.Data = append(logData.Tags.Data, &common.KeyStringValuePair{
 			Key:   k,
 			Value: v.AsString(),
